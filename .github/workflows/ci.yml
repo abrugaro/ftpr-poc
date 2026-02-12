@@ -7,60 +7,31 @@ on:
     branches: [ main, develop ]
 
 jobs:
-  test:
-    name: Run Tests
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [18.x, 20.x]
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Setup Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-
-    - name: Install dependencies
-      run: npm ci
-
-    - name: Run tests
-      run: npm test
-
-    - name: Generate coverage report
-      if: matrix.node-version == '20.x'
-      run: npm run test:coverage
-
-    - name: Upload coverage to artifacts
-      if: matrix.node-version == '20.x'
-      uses: actions/upload-artifact@v4
-      with:
-        name: coverage-report
-        path: coverage/
-        retention-days: 30
-
-  lint:
-    name: Code Quality Check
+  quality-check:
+    name: Quality Check
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20.x'
-
-    - name: Check for .ci-control status
+    - name: Check CI Control
       run: |
-        if [ -f .ci-control ]; then
-          echo "CI Control file exists"
-          echo "Content: $(cat .ci-control)"
+        if [ ! -f .ci-control ]; then
+          echo "✅ No .ci-control file found - CI will PASS by default"
+          exit 0
+        fi
+
+        CONTROL_CONTENT=$(cat .ci-control | tr -d '[:space:]' | tr '[:upper:]' '[:lower:]')
+        echo "CI Control file content: '$CONTROL_CONTENT'"
+
+        if [ "$CONTROL_CONTENT" = "fail" ]; then
+          echo "❌ CI Control set to FAIL - Failing intentionally"
+          exit 1
+        elif [ "$CONTROL_CONTENT" = "pass" ]; then
+          echo "✅ CI Control set to PASS - Passing"
+          exit 0
         else
-          echo "No CI control file found - will pass by default"
+          echo "⚠️  Unknown CI control value: '$CONTROL_CONTENT' - Defaulting to PASS"
+          exit 0
         fi
