@@ -1,0 +1,16 @@
+{
+  "name": "ftpr-poc",
+  "version": "1.0.0",
+  "description": "First Time Pass Rate - Proof of Concept for CI metrics",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "jest",
+    "test:coverage": "jest --coverage"
+  },
+  "keywords": ["ci", "metrics", "grafana"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}
