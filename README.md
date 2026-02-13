@@ -1,6 +1,6 @@
 # FTPR POC - First Time Pass Rate Proof of Concept
 
-This is a demonstration project for testing CI/CD metrics, specifically designed to help track First Time Pass Rate (FTPR) in Grafana dashboards.
+Thissss is a demonstration project for testing CI/CD metrics, specifically designed to help track First Time Pass Rate (FTPR) in Grafana dashboards.
 
 ## Project Overview
 
